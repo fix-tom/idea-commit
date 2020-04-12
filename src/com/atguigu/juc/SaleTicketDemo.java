@@ -1,5 +1,8 @@
 package com.atguigu.juc;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -29,22 +32,34 @@ class Ticket{
 }
 public class SaleTicketDemo {
     public static void main(String[] args) {
+        ExecutorService service = Executors.newFixedThreadPool(3);
         Ticket ticket = new Ticket();
+        try {
+            for (int i = 1; i <=50 ; i++) {
+                service.submit(()->{
+                    ticket.sale();
+                });
+            }
 
-        new Thread(()->{
-            for (int i = 0; i <=30 ; i++) {
-                ticket.sale();
-            }
-        },"B").start();
-        new Thread(()->{
-            for (int i = 0; i <=30 ; i++) {
-                ticket.sale();
-            }
-        },"C").start();
-        new Thread(()->{
-            for (int i = 0; i <=30 ; i++) {
-                ticket.sale();
-            }
-        },"A").start();
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            service.shutdown();
+        }
+//        new Thread(()->{
+//            for (int i = 0; i <=30 ; i++) {
+//                ticket.sale();
+//            }
+//        },"B").start();
+//        new Thread(()->{
+//            for (int i = 0; i <=30 ; i++) {
+//                ticket.sale();
+//            }
+//        },"C").start();
+//        new Thread(()->{
+//            for (int i = 0; i <=30 ; i++) {
+//                ticket.sale();
+//            }
+//        },"A").start();
     }
 }
